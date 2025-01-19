@@ -28,5 +28,14 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
+  json-server:
+    build:
+      context: ./json-server
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./json-server/db.json:/app/db.json
+
 volumes:
   db_data:
