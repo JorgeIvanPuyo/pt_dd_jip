@@ -1,5 +1,6 @@
 from flask import Flask
-from models import db, Conductor, Ruta, Orden
+from models import db
+from blueprints import create_blueprints
 
 app = Flask(__name__)
 
@@ -10,6 +11,8 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
+
+create_blueprints(app)
 
 @app.route("/")
 def home():
