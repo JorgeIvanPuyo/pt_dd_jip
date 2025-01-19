@@ -39,7 +39,7 @@ def get_rutas():
             "id": r.id,
             "notas": r.notas,
             "fecha_programada": str(r.fecha_programada),
-            "conductor_id": r.conductor_id
+            "conductor": r.conductor.nombre
         } for r in rutas
     ]
     return jsonify(resultado), 200
@@ -54,7 +54,7 @@ def get_ruta(id):
         "id": ruta.id,
         "notas": ruta.notas,
         "fecha_programada": str(ruta.fecha_programada),
-        "conductor_id": ruta.conductor_id
+        "conductor": ruta.conductor.nombre
     }), 200
 
 # Editar una ruta
@@ -70,18 +70,18 @@ def update_ruta(id):
         ruta.notas = data["notas"]
     if "fecha_programada" in data:
         ruta.fecha_programada = data["fecha_programada"]
-    if "conductor_id" in data:
-        conductor = Conductor.query.get(data["conductor_id"])
+    if "conductor" in data:
+        conductor = Conductor.query.get(data["conductor"])
         if not conductor:
             return jsonify({"error": "Conductor no encontrado"}), 404
-        ruta.conductor_id = data["conductor_id"]
+        ruta.conductor_id = data["conductor"]
 
     db.session.commit()
     return jsonify({
         "id": ruta.id,
         "notas": ruta.notas,
         "fecha_programada": str(ruta.fecha_programada),
-        "conductor_id": ruta.conductor_id
+        "conductor": ruta.conductor.nombre
     }), 200
 
 # Eliminar una ruta
@@ -105,7 +105,7 @@ def get_ruta_con_ordenes(id):
 
     # Construye la respuesta con las órdenes asociadas
     ordenes = [
-        {"id": o.id, "ruta_id": o.ruta_id, "prioridad": o.prioridad}
+        {"id": o.id, "ruta_id": o.ruta_id, "prioridad": o.prioridad, "valor": o.valor}
         for o in ruta.ordenes
     ]
 
@@ -113,6 +113,6 @@ def get_ruta_con_ordenes(id):
         "id": ruta.id,
         "notas": ruta.notas,
         "fecha_programada": str(ruta.fecha_programada),
-        "conductor_id": ruta.conductor_id,
+        "conductor": ruta.conductor.nombre,
         "ordenes": ordenes
     }), 200

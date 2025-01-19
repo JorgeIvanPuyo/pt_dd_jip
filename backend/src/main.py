@@ -1,6 +1,7 @@
 from flask import Flask
 from models import db
 from blueprints import create_blueprints
+from flask_cors import CORS
 
 app = Flask(__name__)
 
@@ -8,6 +9,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:password@db:5432/deli
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
+
+CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "PUT", "DELETE"]}})
 
 with app.app_context():
     db.create_all()
