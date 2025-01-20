@@ -29,6 +29,7 @@ services:
       - db_data:/var/lib/postgresql/data
 
   json-server:
+    container_name: json-server
     build:
       context: ./json-server
       dockerfile: Dockerfile

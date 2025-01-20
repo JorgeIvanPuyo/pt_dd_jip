@@ -30,10 +30,11 @@ def poblar_base_datos():
         db.session.add_all(conductores)
         db.session.commit()
 
-        # Crear 5 rutas
+        # Crear 5 rutas con IDs definidos o autogenerados
         rutas = []
         for i in range(5):
             ruta = Ruta(
+                id=i + 1000,  # Asignar IDs específicos (opcional)
                 notas=f"Ruta de ejemplo {i + 1}",
                 fecha_programada=date.today() + timedelta(days=i),
                 conductor_id=random.choice([c.id for c in conductores])
@@ -42,13 +43,14 @@ def poblar_base_datos():
         db.session.add_all(rutas)
         db.session.commit()
 
-        # Crear 5 órdenes
+        # Crear 5 órdenes vinculadas a las rutas
         ordenes = []
         for i in range(5):
             orden = Orden(
+                id=i + 2000,  # Asignar IDs específicos (opcional)
                 ruta_id=random.choice([r.id for r in rutas]),
                 prioridad=random.choice([True, False]),
-                valor=round(random.uniform(50, 500), 2) 
+                valor=round(random.uniform(50, 500), 2)
             )
             ordenes.append(orden)
         db.session.add_all(ordenes)
