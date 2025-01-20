@@ -7,7 +7,6 @@ from datetime import datetime
 
 fetch_bp = Blueprint("fetch", __name__)
 
-# Configuración del JSON Server
 JSON_SERVER_URL = "http://json-server:3001/routes"
 
 @fetch_bp.route("/<int:id>", methods=["GET"])
@@ -36,14 +35,11 @@ def fetch_route(id):
     try:
         response = requests.get(f"{JSON_SERVER_URL}/{id}")
         if response.status_code == 200:
-            # Procesar la respuesta del JSON Server
             json_data = response.json()
 
-            # Verificar si el conductor existe en la base de datos
             conductor_id = json_data.get("driverId")
             conductor = Conductor.query.get(conductor_id)
 
-            # Completar la información del conductor
             formatted_data = {
                 "id": int(json_data["id"]),
                 "notas": json_data.get("notes"),
@@ -68,5 +64,4 @@ def fetch_route(id):
         else:
             return jsonify({"error": "Ruta no encontrada en la base de datos ni en el servicio externo"}), 404
     except requests.RequestException as e:
-        # Manejo de errores en la comunicación con el JSON Server
         return jsonify({"error": "Error al comunicarse con el JSON Server", "details": str(e)}), 500
