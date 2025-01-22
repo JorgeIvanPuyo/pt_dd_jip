@@ -2,6 +2,7 @@ from flask import Flask
 from models import db
 from blueprints import create_blueprints
 from flask_cors import CORS
+from populate_db import check_if_db_populated, populate_db
 
 app = Flask(__name__)
 
@@ -21,6 +22,9 @@ CORS(app, resources={
 
 with app.app_context():
     db.create_all()
+
+    if not check_if_db_populated():
+        populate_db()
 
 create_blueprints(app)
 

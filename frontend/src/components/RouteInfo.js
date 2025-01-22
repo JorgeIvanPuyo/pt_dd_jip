@@ -16,8 +16,9 @@ const RouteInfo = ({ routeData }) => {
     return null;
   }
 
-  const { id, conductor, fecha_programada, notas, ordenes } = routeData;
+  const { id, conductor, fecha_programada, notas, ordenes, source } = routeData;
 
+  console.log("data en RouteInfo:", routeData);
   return (
     <Box sx={{ marginTop: "16px" }}>
       <Typography variant="h6" gutterBottom>
@@ -35,6 +36,9 @@ const RouteInfo = ({ routeData }) => {
         </Typography>
         <Typography>
           <strong>Notas:</strong> {notas || "N/A"}
+        </Typography>
+        <Typography>
+          <strong>Fuente:</strong> {source || "N/A"}
         </Typography>
       </Box>
 

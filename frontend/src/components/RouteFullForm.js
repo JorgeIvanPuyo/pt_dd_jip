@@ -35,6 +35,53 @@ const RouteFullForm = ({ routeData, onChange, onSave, isEdit }) => {
     fetchConductores();
   }, []);
 
+  const validateField = (name, value) => {
+    let error = "";
+
+    switch (name) {
+      case "id":
+        if (!value || isNaN(value)) {
+          error = "El ID es requerido y debe ser un número.";
+        }
+        break;
+
+      case "conductor":
+        if (!value) {
+          error = "Seleccione un conductor.";
+        }
+        break;
+
+      case "fecha_programada":
+        if (!value) {
+          error = "La fecha programada es requerida.";
+        } else if (isNaN(Date.parse(value))) {
+          error = "La fecha debe tener un formato válido (YYYY-MM-DD).";
+        }
+        break;
+
+      case "ordenes":
+        if (!value || value.length === 0) {
+          error = "Debe incluir al menos una orden.";
+        } else {
+          const invalidOrders = value.filter(
+            (orden) => !orden.valor || isNaN(orden.valor)
+          );
+          if (invalidOrders.length > 0) {
+            error = "Todas las órdenes deben tener valores numéricos.";
+          }
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: error,
+    }));
+  };
+
   const validate = () => {
     const newErrors = {};
 
@@ -46,9 +93,8 @@ const RouteFullForm = ({ routeData, onChange, onSave, isEdit }) => {
     }
     if (!routeData.fecha_programada) {
       newErrors.fecha_programada = "La fecha programada es requerida.";
-    }
-    if (!routeData.notas) {
-      newErrors.notas = "Las notas son requeridas.";
+    } else if (isNaN(Date.parse(routeData.fecha_programada))) {
+      newErrors.fecha_programada = "La fecha debe tener un formato válido (YYYY-MM-DD).";
     }
     if (!routeData.ordenes || routeData.ordenes.length === 0) {
       newErrors.ordenes = "Debe incluir al menos una orden.";
@@ -70,6 +116,17 @@ const RouteFullForm = ({ routeData, onChange, onSave, isEdit }) => {
     if (validate()) {
       onSave();
     }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    onChange(e);
+    validateField(name, value);
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    validateField(name, value);
   };
 
   const totalOrdenes = routeData.ordenes.reduce(
@@ -97,14 +154,15 @@ const RouteFullForm = ({ routeData, onChange, onSave, isEdit }) => {
         {isEdit ? "Editar Ruta" : "Crear Nueva Ruta"}
       </Typography>
 
-      {submitError && <Alert severity="error">{submitError}</Alert>}
+      {submitError && <Typography color="error">{submitError}</Typography>}
 
       <TextField
         label="ID Ruta"
         id="id"
         name="id"
         value={routeData.id}
-        onChange={onChange}
+        onChange={handleChange}
+        onBlur={handleBlur}
         error={!!errors.id}
         helperText={errors.id}
         fullWidth
@@ -124,7 +182,9 @@ const RouteFullForm = ({ routeData, onChange, onSave, isEdit }) => {
             (c) => c.id === parseInt(e.target.value)
           );
           onChange({ target: { name: "conductor", value: selectedConductor } });
+          validateField("conductor", selectedConductor?.id);
         }}
+        onBlur={handleBlur}
         error={!!errors.conductor}
         helperText={errors.conductor}
         fullWidth
@@ -144,7 +204,8 @@ const RouteFullForm = ({ routeData, onChange, onSave, isEdit }) => {
         type="date"
         name="fecha_programada"
         value={routeData.fecha_programada}
-        onChange={onChange}
+        onChange={handleChange}
+        onBlur={handleBlur}
         fullWidth
         error={!!errors.fecha_programada}
         helperText={errors.fecha_programada}
@@ -155,17 +216,12 @@ const RouteFullForm = ({ routeData, onChange, onSave, isEdit }) => {
         label="Notas"
         name="notas"
         value={routeData.notas}
-        onChange={onChange}
+        onChange={handleChange}
         fullWidth
         multiline
         rows={4}
         InputLabelProps={{ shrink: true }}
       />
-      {errors.notas && (
-        <Typography variant="body2" color="error">
-          {errors.notas}
-        </Typography>
-      )}
 
       <Typography variant="h6" gutterBottom>
         Órdenes Asociadas
@@ -190,20 +246,7 @@ const RouteFullForm = ({ routeData, onChange, onSave, isEdit }) => {
               <TableRow key={orden.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{orden.id}</TableCell>
-                <TableCell>
-                  <TextField
-                    type="number"
-                    value={orden.valor}
-                    onChange={(e) => {
-                      const updatedOrdenes = routeData.ordenes.map((o) =>
-                        o.id === orden.id
-                          ? { ...o, valor: parseFloat(e.target.value) }
-                          : o
-                      );
-                      onChange({ target: { name: "ordenes", value: updatedOrdenes } });
-                    }}
-                  />
-                </TableCell>
+                <TableCell>{orden.valor}</TableCell>
                 <TableCell>
                   <Checkbox
                     checked={orden.prioridad}
@@ -214,6 +257,7 @@ const RouteFullForm = ({ routeData, onChange, onSave, isEdit }) => {
                           : o
                       );
                       onChange({ target: { name: "ordenes", value: updatedOrdenes } });
+                      validateField("ordenes", updatedOrdenes);
                     }}
                   />
                 </TableCell>
@@ -227,7 +271,7 @@ const RouteFullForm = ({ routeData, onChange, onSave, isEdit }) => {
         Total: {totalOrdenes.toFixed(2)} 
       </Typography>
 
-      <Button variant="contained" color="primary" onClick={onSave}>
+      <Button variant="contained" color="primary" type="submit">
         Guardar
       </Button>
     </Box>

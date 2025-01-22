@@ -11,6 +11,8 @@ utilidades_bp = Blueprint("utilidades", __name__)
 @utilidades_bp.route("/poblar", methods=["POST"])
 def poblar_base_datos():
     try:
+        if Ruta.query.first():
+            return jsonify({"message": "La base de datos ya está poblada"}), 200
         # Crear 12 conductores
         conductores = [
             Conductor(id=9, nombre="Eduardo B."),
