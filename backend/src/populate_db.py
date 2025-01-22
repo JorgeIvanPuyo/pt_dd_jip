@@ -7,7 +7,7 @@ import os
 
 def check_if_db_populated():
     """Verifica si la base de datos ya está poblada."""
-    return Ruta.query.first() is not None
+    return Conductor.query.first() is not None
 
 def populate_db():
     """Puebla la base de datos con datos iniciales."""
