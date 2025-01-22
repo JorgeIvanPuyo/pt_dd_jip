@@ -9,7 +9,7 @@ import {
 import api from "../api/api";
 import RouteInfo from "../components/RouteInfo";
 
-const AddRoutePage = () => {
+const SearchRoutePage = () => {
   const [routeData, setRouteData] = useState(null);
   const [routeId, setRouteId] = useState("");
   const [error, setError] = useState("");
@@ -72,4 +72,4 @@ const AddRoutePage = () => {
   );
 };
 
-export default AddRoutePage;
+export default SearchRoutePage;

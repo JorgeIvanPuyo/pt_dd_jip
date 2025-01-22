@@ -54,74 +54,85 @@ const RoutesPage = () => {
       <Typography variant="h4" gutterBottom sx={{ textAlign: "center" }}>
         Lista de Rutas
       </Typography>
-
-      <TableContainer
-        component={Paper}
-        sx={{ boxShadow: 3, borderRadius: "8px" }}
-      >
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>#</TableCell>
-              <TableCell>Ruta</TableCell>
-              <TableCell>Conductor</TableCell>
-              <TableCell>Fecha</TableCell>
-              <TableCell>Acciones</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {routes.map((route, index) => (
-              <TableRow key={route.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{route.id}</TableCell>
-                <TableCell>{route.conductor}</TableCell>
-                <TableCell>{route.fecha_programada}</TableCell>
-                <TableCell>
-                  <Box
-                    sx={{ display: "flex", gap: "16px", alignItems: "center" }}
-                  >
-                    <IconButton
-                      color="primary"
-                      component={Link}
-                      to={`/route-details/${route.id}`}
-                      aria-label="Ver detalles"
-                    >
-                      <VisibilityIcon />
-                    </IconButton>
-                    <IconButton
-                      color="error"
-                      onClick={() => handleDelete(route.id)}
-                      aria-label="Eliminar"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
       <Box
         sx={{
-          display: "flex", 
-          justifyContent: "flex-end", 
+          display: "flex",
+          justifyContent: "flex-end",
           marginTop: "16px",
           gap: "16px",
         }}
       >
         <Link to="/add-route">
           <Button variant="contained" color="secondary">
-            Añadir Ruta
+          Añadir Ruta
           </Button>
         </Link>
         <Link to="/search-route">
           <Button variant="contained" color="secondary">
-            Consultar Ruta
+          Consultar Ruta
           </Button>
         </Link>
       </Box>
+      {routes.length === 0 ? (
+        <Typography
+          variant="body1"
+          sx={{ marginTop: "16px", textAlign: "center" }}
+        >
+          No hay rutas disponibles para mostrar.
+        </Typography>
+      ) : (
+        <TableContainer
+          component={Paper}
+          sx={{ boxShadow: 3, borderRadius: "8px" }}
+        >
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>#</TableCell>
+                <TableCell>Ruta</TableCell>
+                <TableCell>Conductor</TableCell>
+                <TableCell>Fecha</TableCell>
+                <TableCell>Acciones</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {routes.map((route, index) => (
+                <TableRow key={route.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{route.id}</TableCell>
+                  <TableCell>{route.conductor}</TableCell>
+                  <TableCell>{route.fecha_programada}</TableCell>
+                  <TableCell>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: "16px",
+                        alignItems: "center",
+                      }}
+                    >
+                      <IconButton
+                        color="primary"
+                        component={Link}
+                        to={`/route-details/${route.id}`}
+                        aria-label="Ver detalles"
+                      >
+                        <VisibilityIcon />
+                      </IconButton>
+                      <IconButton
+                        color="error"
+                        onClick={() => handleDelete(route.id)}
+                        aria-label="Eliminar"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Box>
   );
 };

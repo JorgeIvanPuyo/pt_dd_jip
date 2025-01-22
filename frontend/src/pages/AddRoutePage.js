@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Box, Button, TextField, Typography, Alert } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import RouteFullForm from "../components/RouteFullForm";
 import api from "../api/api";
 
@@ -14,7 +15,8 @@ const AddRoutePage = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [isRouteFound, setIsRouteFound] = useState(false);
-  const [routeSource, setRouteSource] = useState(null); 
+  const [routeSource, setRouteSource] = useState(null);
+  const navigate = useNavigate(); 
 
   const handleSearch = async () => {
     if (!routeData.id) {
@@ -28,18 +30,20 @@ const AddRoutePage = () => {
     try {
       const response = await api.get(`/fetch/${routeData.id}`);
       if (response.data) {
-        setRouteData({
-          id: response.data.id,
-          conductor: response.data.conductor,
-          fecha_programada: response.data.fecha_programada || "",
-          notas: response.data.notas || "",
-          ordenes: response.data.ordenes || [],
-        });
-        setIsRouteFound(true);
         if (response.data.source === "db") {
-          setRouteSource("db");
+          // Redirige a la página de detalles si la ruta está en la base de datos
+          navigate(`/route-details/${response.data.id}`);
         } else if (response.data.source === "external") {
+          // Pre-carga los datos en el formulario si la fuente es externa
+          setRouteData({
+            id: response.data.id,
+            conductor: response.data.conductor,
+            fecha_programada: response.data.fecha_programada || "",
+            notas: response.data.notas || "",
+            ordenes: response.data.ordenes || [],
+          });
           setRouteSource("external");
+          setIsRouteFound(true);
         }
       }
     } catch (error) {
@@ -74,10 +78,7 @@ const AddRoutePage = () => {
 
   const handleSave = async () => {
     try {
-      if (routeSource === "db") {
-        await api.put(`/rutas/${routeData.id}`, routeData);
-        alert("Ruta actualizada correctamente.");
-      } else if (routeSource === "external") {
+      if (routeSource === "external") {
         await api.post("/rutas/", routeData);
         alert("Ruta creada correctamente.");
       } else {
@@ -139,7 +140,7 @@ const AddRoutePage = () => {
             setRouteData({ ...routeData, [name]: value });
           }}
           onSave={handleSave}
-          isEdit={isRouteFound}
+          isEdit={false}
         />
       )}
     </Box>
@@ -147,3 +148,4 @@ const AddRoutePage = () => {
 };
 
 export default AddRoutePage;
+
