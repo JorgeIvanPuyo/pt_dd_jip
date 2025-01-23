@@ -1,3 +1,4 @@
+import os
 from flask import Blueprint, request, jsonify
 from models.ruta import Ruta
 from models.conductor import Conductor
@@ -7,7 +8,7 @@ from datetime import datetime
 
 fetch_bp = Blueprint("fetch", __name__)
 
-JSON_SERVER_URL = "http://json-server:3001/routes"
+JSON_SERVER_URL = os.getenv("JSON_SERVER_URL")
 
 @fetch_bp.route("/<int:id>", methods=["GET"])
 def fetch_route(id):

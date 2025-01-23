@@ -14,11 +14,11 @@ def create_ruta():
         return jsonify({"error": "Los campos 'notas', 'fecha_programada' y 'conductor' son obligatorios"}), 400
     
     conductor_id = data["conductor"].get("id") if isinstance(data["conductor"], dict) else data["conductor"]
-    conductor = Conductor.query.get(conductor_id)
+    conductor = db.session.get(Conductor, conductor_id)  
     if not conductor:
         return jsonify({"error": "Conductor no encontrado"}), 404
 
-    if "id" in data and Ruta.query.get(data["id"]):
+    if "id" in data and db.session.get(Ruta, data["id"]):  
         return jsonify({"error": f"La ruta con ID {data['id']} ya existe"}), 400
 
     nueva_ruta = Ruta(
@@ -31,18 +31,6 @@ def create_ruta():
     db.session.add(nueva_ruta)
     db.session.commit()
 
-    if "ordenes" in data:
-        for orden_data in data["ordenes"]:
-            nueva_orden = Orden(
-                id=orden_data.get("id"),  
-                ruta_id=nueva_ruta.id,
-                prioridad=orden_data.get("prioridad", False),
-                valor=orden_data.get("valor", 0.0)
-            )
-            db.session.add(nueva_orden)
-
-    db.session.commit()
-
     return jsonify({
         "id": nueva_ruta.id,
         "notas": nueva_ruta.notas,
@@ -51,14 +39,6 @@ def create_ruta():
             "id": conductor.id,
             "nombre": conductor.nombre
         },
-        "ordenes": [
-            {
-                "id": orden.id,
-                "prioridad": orden.prioridad,
-                "valor": orden.valor
-            }
-            for orden in nueva_ruta.ordenes
-        ]
     }), 201
 
 # Obtener todas las rutas
@@ -140,13 +120,14 @@ def update_ruta(id):
 # Eliminar una ruta
 @ruta_bp.route("/<int:id>", methods=["DELETE"])
 def delete_ruta(id):
-    ruta = Ruta.query.get(id)
+    ruta = db.session.get(Ruta, id)
     if not ruta:
         return jsonify({"error": "Ruta no encontrada"}), 404
 
     db.session.delete(ruta)
     db.session.commit()
     return jsonify({"message": "Ruta eliminada correctamente"}), 200
+
 
 # Obtener las órdenes asociadas a una ruta
 @ruta_bp.route("/<int:id>/ordenes", methods=["GET"])
