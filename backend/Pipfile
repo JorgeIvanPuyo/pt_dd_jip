@@ -3,11 +3,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
-[dev-packages]
-
 [packages]
 flask = "*"
 flask-sqlalchemy = "*"
 psycopg2-binary = "*"
 flask-cors = "*"
 requests = "*"
+pytest = "*"

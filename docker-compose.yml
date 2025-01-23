@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./backend/src:/app/src
+      - ./backend/tests:/app/tests
     ports:
       - "5000:5000"
     depends_on:
@@ -15,6 +16,7 @@ services:
       - FLASK_ENV=development
       - FLASK_DEBUG=1
       - DATABASE_URL=postgresql://user:password@db:5432/delivery_app
+      - JSON_SERVER_URL=http://json-server:3001/routes
 
   frontend:
     build:
@@ -28,6 +30,8 @@ services:
       - db
     ports:
       - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000
     
   db:
     image: postgres:15
