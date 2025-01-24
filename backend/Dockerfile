@@ -10,8 +10,6 @@ RUN pip install pipenv
 RUN pipenv install  --deploy --ignore-pipfile
 
 COPY ./src /app/src
-COPY ./tests /app/tests
-
 
 EXPOSE 5000
 
