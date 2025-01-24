@@ -18,7 +18,9 @@ Esta es una aplicación para gestionar rutas, conductores y órdenes. El proyect
    docker compose up --build
    ```
 
-4. Accede a la aplicación en [http://localhost:3000](http://localhost:3000).
+4. Accede a la aplicación de frontend en [http://localhost:3000](http://localhost:3000).
+
+5. La aplicación de backend esta disponible en [http://localhost:5000](http://localhost:5000).
 
 
 La documentación detallada se encuentra en la wiki de este repositorio. (wiki)[https://github.com/JorgeIvanPuyo/pt_dd_jip/wiki]
