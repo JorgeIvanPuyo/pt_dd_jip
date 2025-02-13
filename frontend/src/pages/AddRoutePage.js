@@ -29,6 +29,7 @@ const AddRoutePage = () => {
 
     try {
       const response = await api.get(`/fetch/${routeData.id}`);
+      console.log("Ruta encontrada:", response.data);
       if (response.data) {
         if (response.data.source === "db") {
           // Redirige a la página de detalles si la ruta está en la base de datos
@@ -80,6 +81,7 @@ const AddRoutePage = () => {
     try {
       if (routeSource === "external") {
         await api.post("/rutas/", routeData);
+        console.log("Ruta creada:", routeData);
         alert("Ruta creada correctamente.");
       } else {
         throw new Error("No se puede determinar el origen de la ruta.");

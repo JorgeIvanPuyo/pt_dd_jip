@@ -6,7 +6,7 @@ from models import db
 
 ruta_bp = Blueprint("rutas", __name__)
 
-# Crear una nueva ruta
+# Crear una nueva ruta con órdenes
 @ruta_bp.route("/", methods=["POST"])
 def create_ruta():
     data = request.get_json()
@@ -29,6 +29,24 @@ def create_ruta():
     )
 
     db.session.add(nueva_ruta)
+
+    # Manejo de órdenes asociadas
+    ordenes_creadas = []
+    if "ordenes" in data and isinstance(data["ordenes"], list):
+        for orden_data in data["ordenes"]:
+            nueva_orden = Orden(
+                id=orden_data["id"],
+                ruta_id=nueva_ruta.id,
+                prioridad=orden_data.get("prioridad", False),
+                valor=orden_data.get("valor", 0),
+            )
+            db.session.add(nueva_orden)
+            ordenes_creadas.append({
+                "id": nueva_orden.id,
+                "prioridad": nueva_orden.prioridad,
+                "valor": nueva_orden.valor
+            })
+
     db.session.commit()
 
     return jsonify({
@@ -39,6 +57,7 @@ def create_ruta():
             "id": conductor.id,
             "nombre": conductor.nombre
         },
+        "ordenes": ordenes_creadas
     }), 201
 
 # Obtener todas las rutas
